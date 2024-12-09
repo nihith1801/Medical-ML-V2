@@ -1,0 +1,43 @@
+@keyframes fillAnimation {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-fill {
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s ease;
+}
+
+.animate-fill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: hsl(var(--primary));
+  transition: width 0.3s ease;
+  z-index: -1;
+}
+
+.animate-fill:hover {
+  color: hsl(var(--primary-foreground));
+}
+
+.animate-fill:hover::before {
+  animation: fillAnimation 0.3s forwards;
+}
+
+.dark .animate-fill::before {
+  background-color: hsl(var(--primary-foreground));
+}
+
+.dark .animate-fill:hover {
+  color: hsl(var(--primary));
+}
+

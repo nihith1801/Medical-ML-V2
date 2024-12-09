@@ -1,0 +1,83 @@
+'use client'
+
+import React from 'react'
+import { useAuth } from '@/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+
+export default function SettingsPage() {
+  const { user, updateUserProfile } = useAuth()
+  const router = useRouter()
+  const [name, setName] = React.useState(user?.name || '')
+  const [email, setEmail] = React.useState(user?.email || '')
+
+  React.useEffect(() => {
+    if (!user) {
+      router.push('/')
+    }
+  }, [user, router])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (user) {
+      try {
+        await updateUserProfile(user, { name, email })
+        alert('Profile updated successfully!')
+      } catch (error) {
+        console.error('Error updating profile:', error)
+        alert('Failed to update profile. Please try again.')
+      }
+    }
+  }
+
+  if (!user) {
+    return null
+  }
+
+  return (
+      <div className="container mx-auto px-4 py-8 pt-24">
+        <Card className="bg-background border-border">
+          <CardHeader>
+            <CardTitle>User Settings</CardTitle>
+            <CardDescription>Manage your account settings and preferences.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="flex items-center space-x-4">
+                <Avatar className="h-20 w-20">
+                  <AvatarImage src={user.avatar || undefined} />
+                  <AvatarFallback>{user.name?.[0]}</AvatarFallback>
+                </Avatar>
+                <Button variant="outline">Change Avatar</Button>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <Button type="submit">Save Changes</Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+  )
+}
+
+
+
