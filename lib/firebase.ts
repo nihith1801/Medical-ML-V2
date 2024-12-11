@@ -5,13 +5,13 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAnalytics, isSupported } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCpeJfDo7Mv3Fo-tbVz2K9OW_igTOWs1OU",
-  authDomain: "medical-ml-ea287.firebaseapp.com",
-  projectId: "medical-ml-ea287",
-  storageBucket: "medical-ml-ea287.firebasestorage.app",
-  messagingSenderId: "685023716994",
-  appId: "1:685023716994:web:4935b183efe64187ccf69b",
-  measurementId: "G-GNKQQTFBNJ"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 
