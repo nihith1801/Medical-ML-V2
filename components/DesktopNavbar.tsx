@@ -30,7 +30,8 @@ import "@theme-toggles/react/css/Around.css"
 import { Around } from "@theme-toggles/react"
 import { IconBrandGoogle } from '@tabler/icons-react'
 import { useRouter } from 'next/navigation'
-
+import { SignInOverlay } from "./SignInOverlay"
+import { SignUpOverlay } from "./SignUpOverlay"
 const sidebarItems = [
   {
     title: 'Our Models',
@@ -43,7 +44,7 @@ const sidebarItems = [
 ]
 
 
-export function Navbar() {
+export function DesktopNavbar() {
   const { theme, setTheme } = useTheme()
   const { user, signOut, signInWithGoogle } = useAuth()
   const pathname = usePathname()
@@ -205,4 +206,6 @@ const ListItem = React.forwardRef<
   )
 })
 ListItem.displayName = "ListItem"
+
+export default DesktopNavbar;
 
