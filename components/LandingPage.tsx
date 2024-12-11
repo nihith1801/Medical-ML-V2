@@ -7,10 +7,10 @@ import { Button } from '@/components/ui/button'
 import { cn } from "@/lib/utils"
 
 interface LandingPageProps {
-  isMobile: boolean;
+  isMobile?: boolean;
 }
 
-export default function LandingPage({ isMobile }: LandingPageProps) {
+export default function LandingPage({ isMobile = false }: LandingPageProps) {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
