@@ -1,17 +1,17 @@
-"use client"
+'use client'
 
 import React, { useCallback } from "react"
 import { useDropzone } from "react-dropzone"
 import { cn } from "@/lib/utils"
 
 interface FileUploadProps extends React.HTMLAttributes<HTMLDivElement> {
-  onChange: (files: File[]) => void
+  onFilesChange: (files: File[]) => void
 }
 
-export function FileUpload({ onChange, className, ...props }: FileUploadProps) {
+export function FileUpload({ onFilesChange, className, ...props }: FileUploadProps) {
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    onChange(acceptedFiles)
-  }, [onChange])
+    onFilesChange(acceptedFiles)
+  }, [onFilesChange])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
@@ -34,4 +34,3 @@ export function FileUpload({ onChange, className, ...props }: FileUploadProps) {
     </div>
   )
 }
-
