@@ -33,11 +33,7 @@ Medical ML is a cutting-edge web application that leverages advanced machine lea
 
 ### Installation
 
-1. Clone the repository:
-   \`\`\`
-   git clone https://github.com/yourusername/medical-ml.git
-   cd medical-ml
-   \`\`\`
+1. Clone the repository
 
 2. Install dependencies:
    \`\`\`
