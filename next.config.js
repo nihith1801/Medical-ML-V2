@@ -6,13 +6,13 @@ const nextConfig = {
     domains: ['lh3.googleusercontent.com'],
   },
   env: {
-    NEXT_PUBLIC_FIREBASE_API_KEY: "AIzaSyCpeJfDo7Mv3Fo-tbVz2K9OW_igTOWs1OU",
-    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: "medical-ml-ea287.firebaseapp.com",
-    NEXT_PUBLIC_FIREBASE_PROJECT_ID: "medical-ml-ea287",
-    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: "medical-ml-ea287.firebasestorage.app",
-    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: "685023716994",
-    NEXT_PUBLIC_FIREBASE_APP_ID: "1:685023716994:web:4935b183efe64187ccf69b",
-    NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: "G-GNKQQTFBNJ",
+    FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
+    FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
+    FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
+    FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
+    FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
+    FIREBASE_MEASUREMENT_ID: process.env.FIREBASE_MEASUREMENT_ID,
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
