@@ -29,24 +29,31 @@ const models = [
 ]
 
 export function AuthenticatedDashboard() {
-  const titleRef = useRef(null)
-  const descriptionRef = useRef(null)
-  const cardsRef = useRef([])
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const descriptionRef = useRef<HTMLParagraphElement>(null)
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
     tl.from(titleRef.current, { y: 50, opacity: 0, duration: 1 })
       .from(descriptionRef.current, { y: 30, opacity: 0, duration: 0.8 }, '-=0.5')
-      .from(cardsRef.current, { 
-        y: 50, 
-        opacity: 0, 
-        duration: 0.6, 
-        stagger: 0.2,
-        ease: 'back.out(1.7)'
-      }, '-=0.5')
+      .from(
+        cardsRef.current,
+        { 
+          y: 50, 
+          opacity: 0, 
+          duration: 0.6, 
+          stagger: 0.2,
+          ease: 'back.out(1.7)'
+        },
+        '-=0.5'
+      )
 
-    return () => tl.kill()
+    // Cleanup function now correctly returns void
+    return () => {
+      tl.kill()
+    }
   }, [])
 
   return (
