@@ -1,15 +1,14 @@
-// AuthContext.tsx
-'use client' // Add this directive to make AuthProvider a client component
+'use client'
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth, signInWithGoogle } from '@/lib/firebase';
+import { auth, signInWithGoogle as firebaseSignInWithGoogle } from '@/lib/firebase';
 import {
   User as FirebaseUser,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   sendEmailVerification as firebaseSendEmailVerification,
-  updateProfile as firebaseUpdateProfile, // Import updateProfile
+  updateProfile as firebaseUpdateProfile,
 } from 'firebase/auth';
 import { User } from '@/types/user';
 
@@ -37,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           id: firebaseUser.uid,
           email: firebaseUser.email || '',
           name: firebaseUser.displayName || '',
-          avatar: firebaseUser.photoURL || null,
+          avatar: firebaseUser.photoURL,
           emailVerified: firebaseUser.emailVerified,
         };
         setUser(user);
@@ -62,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: userCredential.user.uid,
         email: userCredential.user.email || '',
         name: name,
-        avatar: userCredential.user.photoURL || null,
+        avatar: userCredential.user.photoURL,
         emailVerified: userCredential.user.emailVerified,
       });
     }
@@ -81,8 +80,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateUserProfile = async (user: User, updates: Partial<User>) => {
     if (auth.currentUser) {
-      await firebaseUpdateProfile(auth.currentUser, updates);
+      await firebaseUpdateProfile(auth.currentUser, updates as { displayName?: string, photoURL?: string });
       setUser({ ...user, ...updates });
+    }
+  };
+
+  const signInWithGoogle = async () => {
+    try {
+      const result = await firebaseSignInWithGoogle();
+      if (result.user) {
+        setUser({
+          id: result.user.uid,
+          email: result.user.email || '',
+          name: result.user.displayName || '',
+          avatar: result.user.photoURL,
+          emailVerified: result.user.emailVerified,
+        });
+      }
+    } catch (error) {
+      console.error('Error signing in with Google:', error);
+      throw error;
     }
   };
 

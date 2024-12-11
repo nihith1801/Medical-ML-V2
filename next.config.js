@@ -14,6 +14,18 @@ const nextConfig = {
     NEXT_PUBLIC_FIREBASE_APP_ID: "1:685023716994:web:4935b183efe64187ccf69b",
     NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: "G-GNKQQTFBNJ",
   },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        encoding: false,
+      };
+    }
+    return config;
+  },
 }
 
 module.exports = nextConfig
