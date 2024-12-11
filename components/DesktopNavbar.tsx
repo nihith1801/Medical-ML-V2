@@ -32,6 +32,7 @@ import { IconBrandGoogle } from '@tabler/icons-react'
 import { useRouter } from 'next/navigation'
 import { SignInOverlay } from "./SignInOverlay"
 import { SignUpOverlay } from "./SignUpOverlay"
+
 const sidebarItems = [
   {
     title: 'Our Models',
