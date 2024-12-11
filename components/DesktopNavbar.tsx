@@ -30,7 +30,8 @@ import "@theme-toggles/react/css/Around.css"
 import { Around } from "@theme-toggles/react"
 import { IconBrandGoogle } from '@tabler/icons-react'
 import { useRouter } from 'next/navigation'
-
+import { SignInOverlay } from "./SignInOverlay"
+import { SignUpOverlay } from "./SignUpOverlay"
 const sidebarItems = [
   {
     title: 'Our Models',
