@@ -32,7 +32,7 @@
     "@radix-ui/react-scroll-area": "^1.0.4",
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.6",
-    "browser-image-compression": "^2.0.2",
+    "browser-image-compression": "^2.0.2"
   },
   "devDependencies": {
     "@types/node": "20.3.1",
