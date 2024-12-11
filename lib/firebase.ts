@@ -1,27 +1,30 @@
+// '@/lib/firebase.ts'
 import { FirebaseApp, initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, Auth } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, Auth, UserCredential } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, FirebaseStorage } from 'firebase/storage';
-import { getAnalytics, isSupported, Analytics } from "firebase/analytics";
+import { getAnalytics, isSupported, Analytics } from 'firebase/analytics';
 
-console.log('Firebase Config:', {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID
-});
+if (process.env.NODE_ENV !== 'production') {
+  console.log('Firebase Config:', {
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_APP_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID
+  });
+}
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID
+  apiKey: process.env.FIREBASE_API_KEY!,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN!,
+  projectId: process.env.FIREBASE_PROJECT_ID!,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET!,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID!,
+  appId: process.env.FIREBASE_APP_ID!,
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID!
 };
 
 let app: FirebaseApp;
@@ -34,7 +37,7 @@ if (!getApps().length) {
   try {
     app = initializeApp(firebaseConfig);
     console.log('Firebase initialized successfully');
-    
+
     // Initialize Analytics
     if (typeof window !== 'undefined') {
       isSupported().then(supported => {
@@ -69,11 +72,15 @@ if (!getApps().length) {
 
 const googleProvider = new GoogleAuthProvider();
 
-export const signInWithGoogle = async () => {
+/**
+ * Signs in with Google using a popup.
+ * @returns A promise that resolves with the UserCredential.
+ */
+export const signInWithGoogle = async (): Promise<UserCredential> => {
   try {
-    const result = await signInWithPopup(auth, googleProvider);
+    const result: UserCredential = await signInWithPopup(auth, googleProvider);
     console.log('Google Sign-In successful:', result.user);
-    return result.user;
+    return result; // Return the entire UserCredential
   } catch (error: any) {
     console.error('Error signing in with Google:', error.code, error.message);
     if (error.email) {
@@ -85,7 +92,18 @@ export const signInWithGoogle = async () => {
 
 export { app, auth, db, storage, analytics };
 
-export const uploadFileWithRetry = async (storageRef: any, file: File, maxRetries = 3) => {
+/**
+ * Uploads a file to Firebase Storage with retry logic.
+ * @param storageRef - Reference to the storage location.
+ * @param file - File to upload.
+ * @param maxRetries - Maximum number of retry attempts.
+ * @returns A promise that resolves with the download URL of the uploaded file.
+ */
+export const uploadFileWithRetry = async (
+  storageRef: any,
+  file: File,
+  maxRetries = 3
+): Promise<string> => {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       const uploadResult = await uploadBytes(storageRef, file);
@@ -96,5 +114,5 @@ export const uploadFileWithRetry = async (storageRef: any, file: File, maxRetrie
       await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
     }
   }
+  throw new Error('Failed to upload file after maximum retries.');
 };
-

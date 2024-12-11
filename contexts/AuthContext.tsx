@@ -1,14 +1,14 @@
-'use client'
-
+'use client';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth, signInWithGoogle as firebaseSignInWithGoogle } from '@/lib/firebase';
 import {
-  User as FirebaseUser,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   sendEmailVerification as firebaseSendEmailVerification,
   updateProfile as firebaseUpdateProfile,
+  User as FirebaseUser,
+  UserCredential,
 } from 'firebase/auth';
 import { User } from '@/types/user';
 
@@ -30,13 +30,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+    const unsubscribe = auth.onAuthStateChanged((firebaseUser: FirebaseUser | null) => {
       if (firebaseUser) {
         const user: User = {
           id: firebaseUser.uid,
           email: firebaseUser.email || '',
           name: firebaseUser.displayName || '',
-          avatar: firebaseUser.photoURL,
+          avatar: firebaseUser.photoURL || '', // Ensure avatar is a string
           emailVerified: firebaseUser.emailVerified,
         };
         setUser(user);
@@ -50,60 +50,89 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error: any) {
+      console.error('Error signing in:', error.code, error.message);
+      throw error;
+    }
   };
 
   const signUp = async (email: string, password: string, name: string) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    if (userCredential.user) {
-      await firebaseUpdateProfile(userCredential.user, { displayName: name });
-      setUser({
-        id: userCredential.user.uid,
-        email: userCredential.user.email || '',
-        name: name,
-        avatar: userCredential.user.photoURL,
-        emailVerified: userCredential.user.emailVerified,
-      });
+    try {
+      const userCredential: UserCredential = await createUserWithEmailAndPassword(auth, email, password);
+      if (userCredential.user) {
+        await firebaseUpdateProfile(userCredential.user, { displayName: name });
+        setUser({
+          id: userCredential.user.uid,
+          email: userCredential.user.email || '',
+          name: name,
+          avatar: userCredential.user.photoURL || '', // Ensure avatar is a string
+          emailVerified: userCredential.user.emailVerified,
+        });
+      }
+    } catch (error: any) {
+      console.error('Error signing up:', error.code, error.message);
+      throw error;
     }
   };
 
   const signOut = async () => {
-    await firebaseSignOut(auth);
-    setUser(null);
+    try {
+      await firebaseSignOut(auth);
+      setUser(null);
+    } catch (error: any) {
+      console.error('Error signing out:', error.code, error.message);
+      throw error;
+    }
   };
 
   const sendEmailVerification = async () => {
     if (auth.currentUser) {
-      await firebaseSendEmailVerification(auth.currentUser);
+      try {
+        await firebaseSendEmailVerification(auth.currentUser);
+      } catch (error: any) {
+        console.error('Error sending email verification:', error.code, error.message);
+        throw error;
+      }
     }
   };
 
   const updateUserProfile = async (user: User, updates: Partial<User>) => {
     if (auth.currentUser) {
-      await firebaseUpdateProfile(auth.currentUser, updates as { displayName?: string, photoURL?: string });
-      setUser({ ...user, ...updates });
+      try {
+        const firebaseUpdates: { displayName?: string; photoURL?: string } = {};
+        if (updates.name !== undefined) firebaseUpdates.displayName = updates.name;
+        if (updates.avatar !== undefined) firebaseUpdates.photoURL = updates.avatar;
+
+        await firebaseUpdateProfile(auth.currentUser, firebaseUpdates);
+        setUser({ ...user, ...updates });
+      } catch (error: any) {
+        console.error('Error updating user profile:', error.code, error.message);
+        throw error;
+      }
     }
   };
 
   const signInWithGoogle = async () => {
     try {
-      const result = await firebaseSignInWithGoogle();
-      if (result.user) {
+      const result: UserCredential = await firebaseSignInWithGoogle();
+      if (result.user) { // Ensure the user property exists
         setUser({
           id: result.user.uid,
           email: result.user.email || '',
           name: result.user.displayName || '',
-          avatar: result.user.photoURL,
+          avatar: result.user.photoURL || '', // Ensure avatar is a string
           emailVerified: result.user.emailVerified,
         });
       }
-    } catch (error) {
-      console.error('Error signing in with Google:', error);
+    } catch (error: any) {
+      console.error('Error signing in with Google:', error.code, error.message);
       throw error;
     }
   };
 
-  const value = {
+  const value: AuthContextType = {
     user,
     loading,
     signIn,
@@ -124,4 +153,3 @@ export function useAuth() {
   }
   return context;
 }
-
