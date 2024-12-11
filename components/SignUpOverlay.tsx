@@ -160,7 +160,7 @@ export function SignUpOverlay({ onClose }: SignUpOverlayProps) {
             onMouseEnter={handleButtonHover}
             onMouseLeave={handleButtonLeave}
           >
-            Sign in with Google
+            Sign up with Google
           </Button>
         </div>
       </div>

@@ -1,4 +1,8 @@
-import { ModelType } from "./modelTypes";
+export enum ModelType {
+  BREAST_CANCER = "breast_cancer",
+  BONE_FRACTURE = "bone_fracture",
+  BRAIN_TUMOR = "brain_tumor"
+}
 
 export interface PredictionResponse {
   prediction: string;

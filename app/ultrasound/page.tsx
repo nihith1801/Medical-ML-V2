@@ -1,90 +1,171 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
-import Link from 'next/link'
+import React, { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { Button } from '@/components/ui/button'
 import { cn } from "@/lib/utils"
 import { useTheme } from 'next-themes'
+import { ClientWrapper } from '@/components/ClientWrapper'
+import { ImagePreview } from '@/components/ImagePreview'
+import { getPrediction, ModelType, PredictionResponse } from '@/lib/api'
+import { Upload, FileUp, File } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
+import { SignInOverlay } from '@/components/SignInOverlay'
+import { SignUpOverlay } from '@/components/SignUpOverlay'
 
 export default function UltrasoundPage() {
   const { theme } = useTheme()
+  const { user } = useAuth()
   const titleRef = useRef<HTMLHeadingElement>(null)
   const descriptionRef = useRef<HTMLParagraphElement>(null)
-  const buttonsRef = useRef<HTMLDivElement>(null)
+  const uploadRef = useRef<HTMLDivElement>(null)
+  const [file, setFile] = useState<File | null>(null)
+  const [preview, setPreview] = useState<string | null>(null)
+  const [prediction, setPrediction] = useState<PredictionResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [showSignIn, setShowSignIn] = useState(false)
+  const [showSignUp, setShowSignUp] = useState(false)
 
   useEffect(() => {
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+    if (typeof window !== 'undefined') {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-    tl.fromTo(
-        [titleRef.current, descriptionRef.current, buttonsRef.current],
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, stagger: 0.2 }
-    )
+      if (titleRef.current && descriptionRef.current && uploadRef.current) {
+        tl.fromTo(
+          [titleRef.current, descriptionRef.current, uploadRef.current],
+          { y: 50, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1, stagger: 0.2 }
+        )
+      }
+    }
   }, [])
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0]
+    if (selectedFile) {
+      setFile(selectedFile)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreview(reader.result as string)
+      }
+      reader.readAsDataURL(selectedFile)
+    }
+  }
+
+  const handleUpload = async () => {
+    if (file) {
+      setIsLoading(true)
+      try {
+        const result = await getPrediction(file, ModelType.BREAST_CANCER)
+        setPrediction(result)
+      } catch (error) {
+        console.error('Error getting prediction:', error)
+        // Handle error (e.g., show error message to user)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+  }
 
   const isDarkMode = theme === 'dark'
 
   return (
+    <ClientWrapper>
       <div className={cn(
-          "min-h-screen pt-20",
-          isDarkMode ? "bg-black" : "bg-white"
+        "min-h-screen pt-20",
+        isDarkMode ? "bg-black" : "bg-white"
       )}>
-        <div className="container mx-auto px-4 h-[calc(100vh-5rem)] flex flex-col items-center justify-center text-center">
-          <h1
-              ref={titleRef}
-              className={cn(
-                  "text-5xl md:text-6xl lg:text-7xl font-bold mb-8 opacity-0",
-                  isDarkMode ? "text-white" : "text-black"
-              )}
+        <div className="container mx-auto px-4 py-8 flex flex-col items-center justify-center">
+          <h1 
+            ref={titleRef}
+            className={cn(
+              "text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-center",
+              isDarkMode ? "text-white" : "text-black"
+            )}
           >
             Ultrasound Analysis Model
           </h1>
-
-          <p
-              ref={descriptionRef}
-              className={cn(
-                  "text-lg md:text-xl max-w-4xl mx-auto mb-12 opacity-0",
-                  isDarkMode ? "text-gray-300" : "text-gray-700"
-              )}
+          
+          <p 
+            ref={descriptionRef}
+            className={cn(
+              "text-lg md:text-xl max-w-4xl mx-auto mb-12 text-center",
+              isDarkMode ? "text-gray-300" : "text-gray-700"
+            )}
           >
             Our advanced Ultrasound Analysis model utilizes deep learning techniques to analyze ultrasound images,
             helping detect various abnormalities including breast cancer. It provides rapid and accurate insights
             to support medical professionals in their diagnostic process.
           </p>
-
-          <div
-              ref={buttonsRef}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0"
+          
+          <div 
+            ref={uploadRef}
+            className="w-full max-w-md mx-auto mb-8"
           >
-            <Button
-                size="lg"
-                className={cn(
-                    "px-8 py-6 text-lg",
-                    "transition-all duration-300 transform hover:scale-105",
-                    "bg-primary text-primary-foreground hover:bg-primary/90"
-                )}
-                onClick={() => {}}
+            <div 
+              className={cn(
+                "h-64 w-full border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer",
+                isDarkMode ? "border-gray-600 bg-gray-800" : "border-gray-300 bg-gray-50",
+                "transition-colors duration-300"
+              )}
+              onClick={() => user ? document.getElementById('file-upload')?.click() : setShowSignIn(true)}
             >
-              Try the model!
-            </Button>
-
-            <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className={cn(
-                    "px-8 py-6 text-lg",
-                    "transition-all duration-300 transform hover:scale-105",
-                    "border-primary text-primary hover:bg-primary/10"
-                )}
-            >
-              <Link href="/">Back to Home</Link>
-            </Button>
+              {preview ? (
+                <img src={preview} alt="Preview" className="h-full w-full object-cover rounded-lg" />
+              ) : (
+                <>
+                  <Upload className={cn("w-12 h-12 mb-4", isDarkMode ? "text-gray-400" : "text-gray-500")} />
+                  <p className={cn("text-sm", isDarkMode ? "text-gray-400" : "text-gray-500")}>
+                    {user ? "Click to upload or drag and drop" : "Sign in to upload an image"}
+                  </p>
+                  {user && (
+                    <p className={cn("text-xs mt-1", isDarkMode ? "text-gray-500" : "text-gray-400")}>
+                      SVG, PNG, JPG or GIF (max. 800x400px)
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+            {user && (
+              <input
+                id="file-upload"
+                type="file"
+                className="hidden"
+                onChange={handleFileChange}
+                accept="image/*"
+              />
+            )}
           </div>
+          
+          {user && file && (
+  <Button
+    size="lg"
+    className={cn(
+      "px-8 py-4 text-lg mt-4",
+      "transition-all duration-300 transform hover:scale-105",
+      "bg-primary text-primary-foreground hover:bg-primary/90"
+    )}
+    onClick={handleUpload}
+    disabled={isLoading}
+  >
+    {isLoading ? 'Processing...' : 'Analyze Image'}
+  </Button>
+)}
+          {(preview || prediction) && (
+            <ImagePreview
+              src={preview || ''}
+              alt="Uploaded ultrasound image"
+              prediction={prediction}
+              modelType={ModelType.BREAST_CANCER}
+              isLoading={isLoading}
+            />
+          )}
         </div>
       </div>
+
+      {showSignIn && <SignInOverlay onClose={() => setShowSignIn(false)} />}
+      {showSignUp && <SignUpOverlay onClose={() => setShowSignUp(false)} />}
+    </ClientWrapper>
   )
 }
-
 

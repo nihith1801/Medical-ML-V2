@@ -39,45 +39,43 @@ export default function SettingsPage() {
   }
 
   return (
-      <div className="container mx-auto px-4 py-8 pt-24">
-        <Card className="bg-background border-border">
-          <CardHeader>
-            <CardTitle>User Settings</CardTitle>
-            <CardDescription>Manage your account settings and preferences.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <Avatar className="h-20 w-20">
-                  <AvatarImage src={user.avatar || undefined} />
-                  <AvatarFallback>{user.name?.[0]}</AvatarFallback>
-                </Avatar>
-                <Button variant="outline">Change Avatar</Button>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <Button type="submit">Save Changes</Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+    <div className="container mx-auto px-4 py-8 pt-24">
+      <Card className="bg-background border-border">
+        <CardHeader>
+          <CardTitle>User Settings</CardTitle>
+          <CardDescription>Manage your account settings and preferences.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <Avatar className="h-20 w-20">
+                <AvatarImage src={user.avatar || undefined} />
+                <AvatarFallback>{user.name?.[0]}</AvatarFallback>
+              </Avatar>
+              <Button variant="outline">Change Avatar</Button>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <Button type="submit">Save Changes</Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
-
-
 
