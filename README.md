@@ -1,5 +1,6 @@
 # Medical ML: Advanced Medical Image Classification
 
+## (still in beta)
 
 Medical ML is a cutting-edge web application that leverages advanced machine learning models for precise medical image classification and early disease detection. Our platform offers state-of-the-art analysis for ultrasound, X-ray, and MRI scans, providing rapid and accurate insights to support medical professionals in their diagnostic process.
 

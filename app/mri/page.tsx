@@ -83,7 +83,7 @@ export default function MRIPage() {
               isDarkMode ? "text-white" : "text-black"
             )}
           >
-            MRI Analysis Model
+            Brain MRI Model
           </h1>
           
           <p 
