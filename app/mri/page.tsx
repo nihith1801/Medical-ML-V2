@@ -27,18 +27,17 @@ export default function MRIPage() {
   const [showSignUp, setShowSignUp] = useState(false)
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-      if (titleRef.current && descriptionRef.current && uploadRef.current) {
-        tl.fromTo(
-          [titleRef.current, descriptionRef.current, uploadRef.current],
-          { y: 50, opacity: 0 },
-          { y: 0, opacity: 1, duration: 1, stagger: 0.2 }
-        )
-      }
-    }
-  }, [])
+      tl.from(titleRef.current, { y: 50, opacity: 0, duration: 1 })
+        .from(descriptionRef.current, { y: 30, opacity: 0, duration: 0.8 }, '-=0.5')
+        .from(uploadRef.current, { y: 30, opacity: 0, duration: 0.8 }, '-=0.5')
+        .from('.animate-fade-in', { y: 30, opacity: 0, duration: 0.8, stagger: 0.2 }, '-=0.5');
+    });
+
+    return () => ctx.revert();
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0]
@@ -137,30 +136,33 @@ export default function MRIPage() {
             )}
           </div>
           
-          {user && file && (
-  <Button
-    size="lg"
-    className={cn(
-      "px-8 py-6 text-lg mt-8 mb-4",
-      "transition-all duration-300 transform hover:scale-105",
-      "bg-primary text-primary-foreground hover:bg-primary/90",
-      "w-full sm:w-auto"
-    )}
-    onClick={handleUpload}
-    disabled={isLoading}
-  >
-    {isLoading ? 'Processing...' : 'Analyze Image'}
-  </Button>
-)}
-          {(preview || prediction) && (
-            <ImagePreview
-              src={preview || ''}
-              alt="Uploaded MRI scan"
-              prediction={prediction}
-              modelType={ModelType.BRAIN_TUMOR}
-              isLoading={isLoading}
-            />
-          )}
+          <div className="mt-8 space-y-8">
+            {user && file && (
+              <Button
+                size="lg"
+                className={cn(
+                  "px-8 py-4 text-lg animate-fade-in",
+                  "transition-all duration-300 transform hover:scale-105",
+                  "bg-primary text-primary-foreground hover:bg-primary/90"
+                )}
+                onClick={handleUpload}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Processing...' : 'Analyze Image'}
+              </Button>
+            )}
+            {(preview || prediction) && (
+              <div className="animate-fade-in">
+                <ImagePreview
+                  src={preview || ''}
+                  alt="Uploaded MRI scan"
+                  prediction={prediction}
+                  modelType={ModelType.BRAIN_TUMOR}
+                  isLoading={isLoading}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
