@@ -42,7 +42,7 @@ export function SignUpOverlay({ onClose }: SignUpOverlayProps) {
       })
     } catch (error) {
       console.error('Error signing up:', error)
-      setAlert({ type: 'error', message: 'An error occurred during sign up. Please try again.' })
+      setAlert({ type: 'error', message: 'An error occurred during sign up. Perhaps the user already exists. Please try logging in.' })
       animateAlert(true)
     }
   }
@@ -83,16 +83,36 @@ export function SignUpOverlay({ onClose }: SignUpOverlayProps) {
       {alert && (
         <div 
           ref={alertRef} 
-          className="fixed top-4 right-4 z-60" 
-          style={{ opacity: 0, transform: 'translateY(-50px)' }}
+          className="fixed top-4 right-4 z-60"
+          // Use inline styles to set initial opacity and transform
+          style={{ opacity: 0, transform: 'translateY(-50px)', pointerEvents: 'none' }}
         >
           <Alert 
             title={alert.type === 'success' ? 'Success' : 'Error'}
             description={alert.message}
-            color={alert.type === 'success' ? 'success' : 'error'}
+            color={alert.type === 'success' ? 'success' : 'error'} // Keep 'error' for semantics
             className="mb-4"
             variant="bordered"
             isDismissable
+            // Apply custom styles using the 'css' prop
+            css={{
+              backgroundColor: alert.type === 'success' ? '#4CAF50' : '#F44336', // Green for success, Red for error
+              color: '#FFFFFF', // White text
+              borderColor: alert.type === 'success' ? '#4CAF50' : '#F44336',
+              // Ensure styles are applied irrespective of theme
+              '& .nextui-alert-body': {
+                color: '#FFFFFF',
+              },
+              '& .nextui-alert-title': {
+                color: '#FFFFFF',
+              },
+              '& .nextui-alert-close': {
+                color: '#FFFFFF',
+                '&:hover': {
+                  color: '#EEEEEE',
+                }
+              }
+            }}
             onDismiss={() => {
               animateAlert(false, () => setAlert(null))
             }}
@@ -193,4 +213,3 @@ export function SignUpOverlay({ onClose }: SignUpOverlayProps) {
     </div>
   )
 }
-
