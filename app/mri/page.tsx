@@ -83,7 +83,7 @@ export default function MRIPage() {
               isDarkMode ? "text-white" : "text-black"
             )}
           >
-            Brain MRI Model
+            MRI Model
           </h1>
           
           <p 
@@ -93,8 +93,8 @@ export default function MRIPage() {
               isDarkMode ? "text-gray-300" : "text-gray-700"
             )}
           >
-            Our advanced Brain MRI Analysis model utilizes deep learning techniques to analyze MRI scans,
-            helping detect various abnormalities including brain tumors. It provides rapid and accurate insights
+            Our advanced MRI Analysis model utilizes deep learning techniques to analyze MRI scans,
+            helping detect various abnormalities including breast cancer tumors. It provides rapid and accurate insights
             to support medical professionals in their diagnostic process.
           </p>
           
