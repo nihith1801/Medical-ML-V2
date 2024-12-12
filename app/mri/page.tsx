@@ -83,7 +83,7 @@ export default function MRIPage() {
               isDarkMode ? "text-white" : "text-black"
             )}
           >
-            Brain MRI Model
+            MRI Analysis Model
           </h1>
           
           <p 
@@ -141,9 +141,10 @@ export default function MRIPage() {
   <Button
     size="lg"
     className={cn(
-      "px-8 py-4 text-lg mt-4",
+      "px-8 py-6 text-lg mt-8 mb-4",
       "transition-all duration-300 transform hover:scale-105",
-      "bg-primary text-primary-foreground hover:bg-primary/90"
+      "bg-primary text-primary-foreground hover:bg-primary/90",
+      "w-full sm:w-auto"
     )}
     onClick={handleUpload}
     disabled={isLoading}

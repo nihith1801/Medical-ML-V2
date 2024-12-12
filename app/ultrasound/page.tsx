@@ -94,7 +94,7 @@ export default function UltrasoundPage() {
             )}
           >
             Our advanced Ultrasound Analysis model utilizes deep learning techniques to analyze ultrasound images,
-            helping classify abnormality like breast cancer tumor lumps. It provides rapid and accurate insights
+            helping detect various abnormalities including breast cancer. It provides rapid and accurate insights
             to support medical professionals in their diagnostic process.
           </p>
           
@@ -141,9 +141,10 @@ export default function UltrasoundPage() {
   <Button
     size="lg"
     className={cn(
-      "px-8 py-4 text-lg mt-4",
+      "px-8 py-6 text-lg mt-8 mb-4",
       "transition-all duration-300 transform hover:scale-105",
-      "bg-primary text-primary-foreground hover:bg-primary/90"
+      "bg-primary text-primary-foreground hover:bg-primary/90",
+      "w-full sm:w-auto"
     )}
     onClick={handleUpload}
     disabled={isLoading}

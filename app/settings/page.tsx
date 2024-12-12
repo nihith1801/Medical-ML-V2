@@ -8,8 +8,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { storage } from '@/lib/firebase'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { db } from '@/lib/firebase'
+import { doc, updateDoc } from 'firebase/firestore'
 
 export default function SettingsPage() {
   const { user, updateUserProfile } = useAuth()
@@ -17,6 +17,7 @@ export default function SettingsPage() {
   const [name, setName] = useState(user?.name || '')
   const [email, setEmail] = useState(user?.email || '')
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar || '')
+  const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   React.useEffect(() => {
@@ -41,14 +42,28 @@ export default function SettingsPage() {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file && user) {
-      const storageRef = ref(storage, `avatars/${user.id}`)
+      setIsUploading(true)
       try {
-        const snapshot = await uploadBytes(storageRef, file)
-        const downloadURL = await getDownloadURL(snapshot.ref)
-        setAvatarUrl(downloadURL)
+        // Convert file to data URL
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = (event) => resolve(event.target?.result as string)
+          reader.onerror = (error) => reject(error)
+          reader.readAsDataURL(file)
+        })
+
+        // Update the user document in Firestore
+        const userRef = doc(db, 'users', user.id)
+        await updateDoc(userRef, { avatar: dataUrl })
+
+        setAvatarUrl(dataUrl)
+        await updateUserProfile(user, { ...user, avatar: dataUrl })
+        alert('Profile picture updated successfully!')
       } catch (error) {
         console.error('Error uploading file:', error)
         alert('Failed to upload image. Please try again.')
+      } finally {
+        setIsUploading(false)
       }
     }
   }
@@ -74,8 +89,9 @@ export default function SettingsPage() {
               <Button 
                 variant="outline" 
                 onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
               >
-                Change Avatar
+                {isUploading ? 'Uploading...' : 'Change Avatar'}
               </Button>
               <input
                 type="file"

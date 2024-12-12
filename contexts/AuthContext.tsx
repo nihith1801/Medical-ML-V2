@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth, signInWithGoogle as firebaseSignInWithGoogle } from '@/lib/firebase';
+import { auth, db, signInWithGoogle as firebaseSignInWithGoogle } from '@/lib/firebase';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -11,6 +11,7 @@ import {
   User as FirebaseUser,
   UserCredential,
 } from 'firebase/auth';
+import { doc, updateDoc } from 'firebase/firestore';
 import { User } from '@/types/user';
 
 interface AuthContextType {
@@ -102,11 +103,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const updateUserProfile = async (user: User, updates: Partial<User>) => {
     if (auth.currentUser) {
       try {
-        const firebaseUpdates: { displayName?: string; photoURL?: string } = {};
-        if (updates.name !== undefined) firebaseUpdates.displayName = updates.name;
-        if (updates.avatar !== undefined) firebaseUpdates.photoURL = updates.avatar;
-
-        await firebaseUpdateProfile(auth.currentUser, firebaseUpdates);
+        const userRef = doc(db, 'users', user.id);
+        await updateDoc(userRef, updates);
         setUser({ ...user, ...updates });
       } catch (error: any) {
         console.error('Error updating user profile:', error.code, error.message);

@@ -1,9 +1,7 @@
-// '@/lib/firebase.ts'
 import { FirebaseApp, initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, Auth, UserCredential } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL, FirebaseStorage } from 'firebase/storage';
-import { getAnalytics, isSupported, Analytics } from 'firebase/analytics';
+import { getFirestore, Firestore, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { getAnalytics, isSupported, Analytics } from "firebase/analytics";
 
 if (process.env.NODE_ENV !== 'production') {
   console.log('Firebase Config:', {
@@ -30,14 +28,13 @@ const firebaseConfig = {
 let app: FirebaseApp;
 let analytics: Analytics | undefined;
 let db: Firestore;
-let storage: FirebaseStorage;
 let auth: Auth;
 
 if (!getApps().length) {
   try {
     app = initializeApp(firebaseConfig);
     console.log('Firebase initialized successfully');
-
+    
     // Initialize Analytics
     if (typeof window !== 'undefined') {
       isSupported().then(supported => {
@@ -52,13 +49,11 @@ if (!getApps().length) {
     db = getFirestore(app);
     console.log('Firestore initialized successfully');
 
-    // Initialize Storage
-    storage = getStorage(app);
-    console.log('Firebase Storage initialized successfully');
 
     // Initialize Auth
     auth = getAuth(app);
     console.log('Firebase Auth initialized successfully');
+
   } catch (error) {
     console.error('Error initializing Firebase:', error);
     throw error;
@@ -66,7 +61,6 @@ if (!getApps().length) {
 } else {
   app = getApp();
   db = getFirestore(app);
-  storage = getStorage(app);
   auth = getAuth(app);
 }
 
@@ -90,29 +84,5 @@ export const signInWithGoogle = async (): Promise<UserCredential> => {
   }
 };
 
-export { app, auth, db, storage, analytics };
+export { app, auth, db, analytics };
 
-/**
- * Uploads a file to Firebase Storage with retry logic.
- * @param storageRef - Reference to the storage location.
- * @param file - File to upload.
- * @param maxRetries - Maximum number of retry attempts.
- * @returns A promise that resolves with the download URL of the uploaded file.
- */
-export const uploadFileWithRetry = async (
-  storageRef: any,
-  file: File,
-  maxRetries = 3
-): Promise<string> => {
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    try {
-      const uploadResult = await uploadBytes(storageRef, file);
-      return await getDownloadURL(uploadResult.ref);
-    } catch (error) {
-      if (attempt === maxRetries - 1) throw error;
-      // Wait for 2^attempt seconds before retrying
-      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
-    }
-  }
-  throw new Error('Failed to upload file after maximum retries.');
-};

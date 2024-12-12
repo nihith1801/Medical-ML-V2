@@ -21,6 +21,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.6",
+    "@supabase/supabase-js": "^2.47.6",
     "@tabler/icons-react": "^2.30.0",
     "@theme-toggles/react": "^4.1.0",
     "browser-image-compression": "^2.0.2",
