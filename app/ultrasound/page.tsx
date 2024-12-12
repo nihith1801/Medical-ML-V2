@@ -83,7 +83,7 @@ export default function UltrasoundPage() {
               isDarkMode ? "text-white" : "text-black"
             )}
           >
-            Brain Ultrasound Model
+            Ultrasound Analysis Model
           </h1>
           
           <p 
@@ -94,7 +94,7 @@ export default function UltrasoundPage() {
             )}
           >
             Our advanced Ultrasound Analysis model utilizes deep learning techniques to analyze ultrasound images,
-            helping detect various abnormalities including brain tumors. It provides rapid and accurate insights
+            helping classify abnormality like breast cancer tumor lumps. It provides rapid and accurate insights
             to support medical professionals in their diagnostic process.
           </p>
           
