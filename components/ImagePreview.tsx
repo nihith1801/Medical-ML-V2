@@ -41,7 +41,7 @@ export function ImagePreview({ src, alt, prediction, modelType, isLoading }: Ima
             </div>
           ) : prediction ? (
             <>
-              <p className="text-lg"><strong>Result:</strong> {prediction.prediction}</p>
+              <p className="text-lg"><strong>Result:</strong> {prediction.prediction.split(' ')[1]}</p>
               <p><strong>Confidence:</strong> {(prediction.confidence_score * 100).toFixed(2)}%</p>
             </>
           ) : (
@@ -52,4 +52,6 @@ export function ImagePreview({ src, alt, prediction, modelType, isLoading }: Ima
     </Card>
   )
 }
+
+
 
